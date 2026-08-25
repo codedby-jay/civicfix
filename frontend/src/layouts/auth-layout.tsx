@@ -8,7 +8,7 @@ export function AuthLayout() {
     <div className="grid min-h-svh lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
       <SkipLink />
       <aside className="relative hidden overflow-hidden bg-brand-ink px-12 py-10 text-paper lg:flex lg:flex-col">
-        <Logo className="text-paper [&_span:last-child]:text-paper" />
+        <Logo inverted />
         <div className="mt-auto max-w-md pb-8">
           <p className="font-display text-4xl leading-tight text-paper">{brand.tagline}</p>
           <p className="mt-4 text-sm leading-relaxed text-paper/75">

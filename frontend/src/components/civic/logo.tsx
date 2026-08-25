@@ -5,15 +5,19 @@ import { cn } from '@/lib/utils'
 
 interface LogoProps {
   compact?: boolean
+  inverted?: boolean
   className?: string
   to?: string
 }
 
-export function Logo({ compact = false, className, to = routes.home }: LogoProps) {
+export function Logo({ compact = false, inverted = false, className, to = routes.home }: LogoProps) {
   return (
-    <Link to={to} className={cn('inline-flex items-center gap-2.5 text-ink', className)}>
+    <Link to={to} className={cn('inline-flex items-center gap-2.5', inverted ? 'text-paper' : 'text-ink', className)}>
       <span
-        className="inline-flex size-7 items-center justify-center rounded-md bg-brand text-[0.7rem] font-semibold tracking-tight text-paper"
+        className={cn(
+          'inline-flex size-7 items-center justify-center rounded-md text-[0.7rem] font-semibold tracking-tight',
+          inverted ? 'bg-paper text-brand-ink' : 'bg-brand text-paper',
+        )}
         aria-hidden
       >
         CF
