@@ -5,7 +5,11 @@ export function isValidEmail(value: string): boolean {
 }
 
 export function requiredMessage(label: string): string {
-  return `${label} is required.`
+  return `Enter your ${label.toLowerCase()}.`
+}
+
+export function passwordMessage(): string {
+  return 'Use at least 8 characters. Avoid your name or email.'
 }
 
 export type FieldErrors<T extends string> = Partial<Record<T, string>>

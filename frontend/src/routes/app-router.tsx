@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AdminDashboardPage } from '@/pages/admin/admin-dashboard-page'
 import { LoginPage } from '@/pages/auth/login-page'
 import { RegisterPage } from '@/pages/auth/register-page'
+import { ComplaintDetailPage } from '@/pages/citizen/complaint-detail-page'
 import { ComplaintsPage } from '@/pages/citizen/complaints-page'
 import { DashboardPage } from '@/pages/citizen/dashboard-page'
 import { MapPage } from '@/pages/citizen/map-page'
@@ -28,6 +29,7 @@ export function AppRouter() {
           <Route path={routes.dashboard} element={<DashboardPage />} />
           <Route path={routes.report} element={<ReportPage />} />
           <Route path={routes.complaints} element={<ComplaintsPage />} />
+          <Route path={routes.complaintDetail} element={<ComplaintDetailPage />} />
           <Route path={routes.map} element={<MapPage />} />
           <Route path={routes.admin} element={<AdminDashboardPage />} />
         </Route>

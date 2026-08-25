@@ -22,10 +22,54 @@ export type IssueCategoryId =
   | 'traffic'
   | 'property'
 
+export type PriorityLevel = 'urgent' | 'standard' | 'watch'
+
 export interface IssueCategory {
   id: IssueCategoryId
   label: string
   description: string
+}
+
+export interface AnalysisPreview {
+  detected: string
+  confidence: number
+  safetyRisk: string
+  suggestedDepartment: string
+  nearbyDuplicates: number
+}
+
+export interface TimelineEvent {
+  status: ComplaintStatus
+  atLabel: string
+  note: string
+}
+
+export interface ActivityEvent {
+  atLabel: string
+  actor: string
+  note: string
+}
+
+export interface ComplaintRecord {
+  id: string
+  title: string
+  description: string
+  category: IssueCategoryId
+  severity: SeverityLevel
+  status: ComplaintStatus
+  priority: PriorityLevel
+  department: string
+  locationLabel: string
+  reportedAtLabel: string
+  assignedTo: string | null
+  reporterName: string
+  isMine: boolean
+  x: number
+  y: number
+  analysis: AnalysisPreview
+  timeline: TimelineEvent[]
+  activity: ActivityEvent[]
+  similarIds: string[]
 }
 
 export interface CivicIssuePreview {

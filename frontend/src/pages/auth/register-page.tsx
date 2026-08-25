@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordField } from '@/components/ui/password-field'
 import { useToast } from '@/components/ui/toast'
 import { routes } from '@/constants/routes'
-import { isValidEmail, requiredMessage, type FieldErrors } from '@/lib/validation'
+import { isValidEmail, passwordMessage, requiredMessage, type FieldErrors } from '@/lib/validation'
 import { FieldError } from '@/components/common/field-error'
 
 type RegisterFields = 'name' | 'email' | 'password' | 'confirmPassword' | 'location'
@@ -25,12 +26,13 @@ export function RegisterPage() {
 
     if (!name.trim()) nextErrors.name = requiredMessage('Name')
     if (!email.trim()) nextErrors.email = requiredMessage('Email')
-    else if (!isValidEmail(email)) nextErrors.email = 'Enter a valid email address.'
+    else if (!isValidEmail(email))
+      nextErrors.email = 'That email does not look complete. Check for a missing @ or domain.'
     if (!password) nextErrors.password = requiredMessage('Password')
-    else if (password.length < 8) nextErrors.password = 'Password must be at least 8 characters.'
-    if (!confirmPassword) nextErrors.confirmPassword = requiredMessage('Confirm password')
-    else if (confirmPassword !== password) nextErrors.confirmPassword = 'Passwords do not match.'
-    if (!location.trim()) nextErrors.location = requiredMessage('Location')
+    else if (password.length < 8) nextErrors.password = passwordMessage()
+    if (!confirmPassword) nextErrors.confirmPassword = 'Re-enter the same password to confirm it.'
+    else if (confirmPassword !== password) nextErrors.confirmPassword = 'Those passwords do not match.'
+    if (!location.trim()) nextErrors.location = 'Add the city or neighborhood you report from.'
 
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
@@ -38,15 +40,16 @@ export function RegisterPage() {
     push({
       tone: 'info',
       title: 'Registration is not connected yet',
-      description: 'Accounts will be created in a later phase. Your form is valid.',
+      description: 'The form is valid. Accounts will be created in a later phase.',
     })
   }
 
   return (
     <div>
-      <h1 className="font-display text-3xl tracking-tight text-ink">Create an account</h1>
+      <p className="text-sm font-semibold text-brand">CivicFix</p>
+      <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Create an account</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Report issues from your neighborhood and follow them through to resolution.
+        Use your name and neighborhood so reports can be tied to a place. No account is stored yet.
       </p>
       <form className="mt-8 space-y-4" onSubmit={onSubmit} noValidate>
         <div>
@@ -57,8 +60,9 @@ export function RegisterPage() {
             value={name}
             onChange={(event) => setName(event.target.value)}
             invalid={Boolean(errors.name)}
+            aria-describedby={errors.name ? 'name-error' : undefined}
           />
-          <FieldError message={errors.name} />
+          <FieldError id="name-error" message={errors.name} />
         </div>
         <div>
           <Label htmlFor="email">Email</Label>
@@ -69,32 +73,33 @@ export function RegisterPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
-          <FieldError message={errors.email} />
+          <FieldError id="email-error" message={errors.email} />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordField
             id="password"
-            type="password"
             autoComplete="new-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             invalid={Boolean(errors.password)}
+            aria-describedby={errors.password ? 'password-error' : undefined}
           />
-          <FieldError message={errors.password} />
+          <FieldError id="password-error" message={errors.password} />
         </div>
         <div>
           <Label htmlFor="confirmPassword">Confirm password</Label>
-          <Input
+          <PasswordField
             id="confirmPassword"
-            type="password"
             autoComplete="new-password"
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}
             invalid={Boolean(errors.confirmPassword)}
+            aria-describedby={errors.confirmPassword ? 'confirm-error' : undefined}
           />
-          <FieldError message={errors.confirmPassword} />
+          <FieldError id="confirm-error" message={errors.confirmPassword} />
         </div>
         <div>
           <Label htmlFor="location">Location</Label>
@@ -105,8 +110,9 @@ export function RegisterPage() {
             value={location}
             onChange={(event) => setLocation(event.target.value)}
             invalid={Boolean(errors.location)}
+            aria-describedby={errors.location ? 'location-error' : undefined}
           />
-          <FieldError message={errors.location} />
+          <FieldError id="location-error" message={errors.location} />
         </div>
         <Button type="submit" className="w-full">
           Create account

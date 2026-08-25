@@ -5,6 +5,7 @@ export const routes = {
   dashboard: '/dashboard',
   report: '/report',
   complaints: '/complaints',
+  complaintDetail: '/complaints/:id',
   map: '/map',
   admin: '/admin',
 } as const

@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordField } from '@/components/ui/password-field'
 import { useToast } from '@/components/ui/toast'
 import { FieldError } from '@/components/common/field-error'
 import { routes } from '@/constants/routes'
-import { isValidEmail, requiredMessage, type FieldErrors } from '@/lib/validation'
+import { isValidEmail, passwordMessage, requiredMessage, type FieldErrors } from '@/lib/validation'
 
 type LoginFields = 'email' | 'password'
 
@@ -23,9 +24,9 @@ export function LoginPage() {
     const nextErrors: FieldErrors<LoginFields> = {}
 
     if (!email.trim()) nextErrors.email = requiredMessage('Email')
-    else if (!isValidEmail(email)) nextErrors.email = 'Enter a valid email address.'
+    else if (!isValidEmail(email)) nextErrors.email = 'That email does not look complete. Check for a missing @ or domain.'
     if (!password) nextErrors.password = requiredMessage('Password')
-    else if (password.length < 8) nextErrors.password = 'Password must be at least 8 characters.'
+    else if (password.length < 8) nextErrors.password = passwordMessage()
 
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
@@ -33,15 +34,16 @@ export function LoginPage() {
     push({
       tone: 'info',
       title: 'Sign-in is not connected yet',
-      description: 'Authentication will be implemented in a later phase. Your form is valid.',
+      description: 'Your details look valid. Accounts will be verified in a later phase.',
     })
   }
 
   return (
     <div>
-      <h1 className="font-display text-3xl tracking-tight text-ink">Sign in</h1>
+      <p className="text-sm font-semibold text-brand">CivicFix</p>
+      <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Sign in</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Use your CivicFix account to report and track issues.
+        Continue to your reports and the civic map. Authentication is not live in this phase.
       </p>
       <form className="mt-8 space-y-4" onSubmit={onSubmit} noValidate>
         <div>
@@ -53,20 +55,21 @@ export function LoginPage() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? 'email-error' : undefined}
           />
-          <FieldError message={errors.email} />
+          <FieldError id="email-error" message={errors.email} />
         </div>
         <div>
           <Label htmlFor="password">Password</Label>
-          <Input
+          <PasswordField
             id="password"
-            type="password"
             autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             invalid={Boolean(errors.password)}
+            aria-describedby={errors.password ? 'password-error' : undefined}
           />
-          <FieldError message={errors.password} />
+          <FieldError id="password-error" message={errors.password} />
         </div>
         <div className="flex items-center justify-between gap-3">
           <Checkbox
@@ -82,7 +85,7 @@ export function LoginPage() {
               push({
                 tone: 'info',
                 title: 'Password reset is not available yet',
-                description: 'Account recovery will be added with authentication.',
+                description: 'Recovery will ship with authentication. No email was sent.',
               })
             }
           >
