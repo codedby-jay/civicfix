@@ -1,18 +1,20 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordField } from '@/components/ui/password-field'
-import { useToast } from '@/components/ui/toast'
 import { routes } from '@/constants/routes'
-import { isValidEmail, passwordMessage, requiredMessage, type FieldErrors } from '@/lib/validation'
 import { FieldError } from '@/components/common/field-error'
+import { ApiRequestError } from '@/lib/api/client'
+import { isValidEmail, passwordMessage, requiredMessage, type FieldErrors } from '@/lib/validation'
+import { useAuth } from '@/providers/auth-provider'
 
 type RegisterFields = 'name' | 'email' | 'password' | 'confirmPassword' | 'location'
 
 export function RegisterPage() {
-  const { push } = useToast()
+  const { register } = useAuth()
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -20,7 +22,7 @@ export function RegisterPage() {
   const [location, setLocation] = useState('')
   const [errors, setErrors] = useState<FieldErrors<RegisterFields>>({})
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const nextErrors: FieldErrors<RegisterFields> = {}
 
@@ -37,11 +39,24 @@ export function RegisterPage() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
-    push({
-      tone: 'info',
-      title: 'Registration is not connected yet',
-      description: 'The form is valid. Accounts will be created in a later phase.',
-    })
+    try {
+      await register({ name, email, password, location })
+      navigate(routes.dashboard, { replace: true })
+    } catch (caught) {
+      if (caught instanceof ApiRequestError) {
+        const fieldErrors: FieldErrors<RegisterFields> = {}
+        for (const item of caught.errors) {
+          if (item.field === 'email' || item.field === 'name' || item.field === 'password') {
+            fieldErrors[item.field] = item.message
+          }
+        }
+        setErrors(
+          Object.keys(fieldErrors).length > 0 ? fieldErrors : { email: caught.message },
+        )
+        return
+      }
+      setErrors({ email: 'Unable to create an account right now.' })
+    }
   }
 
   return (
@@ -49,7 +64,7 @@ export function RegisterPage() {
       <p className="text-sm font-semibold text-brand">CivicFix</p>
       <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Create an account</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Use your name and neighborhood so reports can be tied to a place. No account is stored yet.
+        Use your name and neighborhood so reports can be tied to a place.
       </p>
       <form className="mt-8 space-y-4" onSubmit={onSubmit} noValidate>
         <div>

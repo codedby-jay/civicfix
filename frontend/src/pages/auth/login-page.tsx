@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -8,18 +8,22 @@ import { PasswordField } from '@/components/ui/password-field'
 import { useToast } from '@/components/ui/toast'
 import { FieldError } from '@/components/common/field-error'
 import { routes } from '@/constants/routes'
+import { ApiRequestError } from '@/lib/api/client'
 import { isValidEmail, passwordMessage, requiredMessage, type FieldErrors } from '@/lib/validation'
+import { useAuth } from '@/providers/auth-provider'
 
 type LoginFields = 'email' | 'password'
 
 export function LoginPage() {
   const { push } = useToast()
+  const { login } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(false)
   const [errors, setErrors] = useState<FieldErrors<LoginFields>>({})
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const nextErrors: FieldErrors<LoginFields> = {}
 
@@ -31,11 +35,14 @@ export function LoginPage() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
-    push({
-      tone: 'info',
-      title: 'Sign-in is not connected yet',
-      description: 'Your details look valid. Accounts will be verified in a later phase.',
-    })
+    try {
+      await login({ email, password })
+      navigate(routes.dashboard, { replace: true })
+    } catch (caught) {
+      const message =
+        caught instanceof ApiRequestError ? caught.message : 'Unable to sign in right now.'
+      setErrors({ password: message })
+    }
   }
 
   return (
@@ -43,7 +50,7 @@ export function LoginPage() {
       <p className="text-sm font-semibold text-brand">CivicFix</p>
       <h1 className="mt-1 font-display text-3xl tracking-tight text-ink">Sign in</h1>
       <p className="mt-2 text-sm text-ink-muted">
-        Continue to your reports and the civic map. Authentication is not live in this phase.
+        Continue to your reports and the civic map.
       </p>
       <form className="mt-8 space-y-4" onSubmit={onSubmit} noValidate>
         <div>

@@ -7,11 +7,15 @@ import { brand } from '@/constants/brand'
 import { landingAnchors, routes } from '@/constants/routes'
 import { publicNavLinks } from '@/components/navigation/nav-links'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/providers/auth-provider'
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const onHome = location.pathname === routes.home
+  const { isAuthenticated } = useAuth()
+  const accountTo = isAuthenticated ? routes.dashboard : routes.login
+  const accountLabel = isAuthenticated ? 'Dashboard' : 'Sign In'
 
   return (
     <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/90 backdrop-blur-sm">
@@ -30,7 +34,7 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-2 lg:flex">
           <Button variant="ghost" size="sm" asChild>
-            <NavLink to={routes.login}>Sign In</NavLink>
+            <NavLink to={accountTo}>{accountLabel}</NavLink>
           </Button>
           <Button size="sm" asChild>
             <NavLink to={routes.report}>Report an Issue</NavLink>
@@ -61,11 +65,11 @@ export function SiteHeader() {
               </a>
             ))}
             <Link
-              to={routes.login}
+              to={accountTo}
               className="rounded-md px-2 py-2 text-sm text-ink"
               onClick={() => setOpen(false)}
             >
-              Sign In
+              {accountLabel}
             </Link>
             <Button className="mt-2" asChild>
               <Link to={routes.report} onClick={() => setOpen(false)}>
