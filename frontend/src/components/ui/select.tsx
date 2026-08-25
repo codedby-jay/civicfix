@@ -10,7 +10,7 @@ interface SelectOption {
 
 interface SelectProps {
   id?: string
-  value: string
+  value?: string
   onValueChange: (value: string) => void
   placeholder?: string
   options: SelectOption[]
@@ -30,7 +30,7 @@ export function Select({
   'aria-label': ariaLabel,
 }: SelectProps) {
   return (
-    <SelectPrimitive.Root value={value} onValueChange={onValueChange} disabled={disabled}>
+    <SelectPrimitive.Root value={value || undefined} onValueChange={onValueChange} disabled={disabled}>
       <SelectPrimitive.Trigger
         id={id}
         aria-label={ariaLabel}

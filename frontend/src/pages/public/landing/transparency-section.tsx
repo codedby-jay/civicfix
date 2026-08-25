@@ -14,23 +14,26 @@ const copy: Record<(typeof complaintStatuses)[number], string> = {
 export function TransparencySection() {
   return (
     <section id="tracking" className="scroll-mt-20 border-b border-line bg-surface">
-      <div className="container-wide py-20">
+      <div className="container-wide py-16">
         <Reveal>
           <SectionHeader
             eyebrow="Transparency"
             title="Every complaint has a public path"
-            description="CivicFix does not hide work in inboxes. Status is visible from first report to last update."
+            description="Status is not buried in an inbox. Anyone can follow the same trail from first report to last update."
           />
         </Reveal>
         <Reveal>
-          <ol className="mt-12 grid gap-0 md:grid-cols-5">
+          <ol className="mt-10 grid gap-0 md:grid-cols-5">
             {complaintStatuses.map((status, index) => (
               <li
                 key={status}
-                className="relative border-t border-line py-6 md:border-t-0 md:border-l md:px-5 md:first:border-l-0 md:first:pl-0"
+                className="relative border-t border-line py-5 md:border-t-0 md:border-l md:px-5 md:py-0 md:first:border-l-0 md:first:pl-0"
               >
-                <p className="font-mono text-xs text-ink-subtle">
+                <p className="font-mono text-[11px] text-ink-subtle">
                   {String(index + 1).padStart(2, '0')}
+                  {index < complaintStatuses.length - 1 ? (
+                    <span className="ml-2 hidden text-ink-subtle md:inline">→</span>
+                  ) : null}
                 </p>
                 <div className="mt-3">
                   <StatusBadge status={status} />
