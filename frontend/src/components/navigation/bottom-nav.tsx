@@ -2,6 +2,7 @@ import { LayoutDashboard, Map, Plus, Shield, FolderOpen } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { routes } from '@/constants/routes'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/providers/auth-provider'
 
 const items = [
   { to: routes.dashboard, label: 'Home', icon: LayoutDashboard },
@@ -12,13 +13,16 @@ const items = [
 ]
 
 export function BottomNav() {
+  const { user } = useAuth()
+  const visible = items.filter((item) => item.to !== routes.admin || user?.role === 'admin')
+
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] md:hidden"
       aria-label="Primary mobile"
     >
-      <ul className="grid grid-cols-5">
-        {items.map((item) => {
+      <ul className={visible.length === 5 ? 'grid grid-cols-5' : 'grid grid-cols-4'}>
+        {visible.map((item) => {
           const Icon = item.icon
           return (
             <li key={item.to}>

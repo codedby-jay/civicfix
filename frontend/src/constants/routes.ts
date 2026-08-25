@@ -8,6 +8,7 @@ export const routes = {
   complaintDetail: '/complaints/:id',
   map: '/map',
   admin: '/admin',
+  profile: '/profile',
 } as const
 
 export const landingAnchors = {
